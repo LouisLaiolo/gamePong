@@ -1,0 +1,193 @@
+input#startGame,
+input#pauseGame,
+input#resumeGame {
+  width: 120px;
+}
+input#resumeGame {
+  display: none;
+}
+div#divGame {
+  cursor: none;
+  display: block;
+  border: 1px solid #aa9a8b;
+  float: left;
+}
+div#left,
+div#right {
+  display: block;
+  float: left;
+  text-align: center;
+}
+div#blocToCenter {
+  left: 0;
+  right: 0;
+  margin: auto;
+  width: 1020px;
+}
+body {
+  background-image: url(background.png);
+}
+div#title,
+div#info {
+  position: relative;
+  top: 0;
+  left: 0;
+  display: block;
+  width: 100%;
+  text-align: center;
+  font-family: "Courier New";
+  color: #a39282;
+}
+div#info {
+  position: relative;
+  display: block;
+  width: 100%;
+  text-align: center;
+  font-family: "Courier New";
+  color: #ffe9d3;
+}
+@media (min-width: 1281px) {
+  div#title {
+    margin-top: 10em;
+  }
+}
+
+/* MAIN MENU ################################################################################################## */
+
+#allthethings {
+  width: 0px;
+  height: 0px;
+  border-left: 300px solid transparent;
+  border-right: 300px solid transparent;
+  border-top: 300px solid transparent;
+  position: relative;
+  margin: auto;
+  top: 5px;
+  left: 2px;
+}
+
+#single {
+  position: relative;
+  bottom: 330px;
+  right: 300px;
+  width: 600px;
+  background: #725e4c;
+  text-align: center;
+  font-size: 30px;
+  background-size: 1px 300%;
+  -webkit-transition: 0.5s;
+  transition: 0.5s;
+  color: #fefefe;
+  font-family: Courier New;
+  cursor: pointer;
+}
+
+#single:hover {
+  background: #503c2c;
+  color: white;
+  -webkit-transform: rotate(-1deg);
+  transform: rotate(-2deg);
+}
+
+#two {
+  width: 500px;
+  background: #725e4c;
+  position: relative;
+  bottom: 345px;
+  right: 240px;
+  text-align: center;
+  font-size: 30px;
+  font-family: Courier New;
+  color: #fefefe;
+  -webkit-transition: 0.5s;
+  transition: 0.5s;
+  cursor: pointer;
+}
+
+#two:hover {
+  background: #503c2c;
+  color: white;
+  -webkit-transform: rotate(-2deg);
+  transform: rotate(-2deg);
+}
+
+#four {
+  width: 400px;
+  background: #725e4c;
+  position: relative;
+  bottom: 360px;
+  right: 200px;
+  font-size: 30px;
+  text-align: center;
+  font-family: Courier New;
+  color: #fefefe;
+  -webkit-transition: 0.5s;
+  transition: 0.5s;
+  cursor: pointer;
+}
+
+#four:hover {
+  background: #503c2c;
+  color: white;
+  -webkit-transform: rotate(-2deg);
+  transform: rotate(-2deg);
+}
+
+#infos {
+  width: 300px;
+  position: relative;
+  background: #725e4c;
+  bottom: 375px;
+  font-size: 30px;
+  right: 150px;
+  text-align: center;
+  font-family: Courier New;
+  color: #fefefe;
+  -webkit-transition: 0.5s;
+  transition: 0.5s;
+  cursor: pointer;
+}
+
+#infos:hover {
+  background: #503c2c;
+  color: white;
+  -webkit-transform: rotate(-2deg);
+  transform: rotate(-2deg);
+}
+
+/* AUTH ##################################################################################################### */
+
+div.n_log_in {
+  padding: 12px;
+}
+
+input#userName {
+  padding: 12px 20px;
+  text-align: center;
+  font-family: Courier New;
+  color: #1e1e1f;
+  font-size: 22px;
+}
+
+button#Login_Register {
+  padding: 12px 20px;
+  text-align: center;
+  background: #725e4c;
+  font-family: Courier New;
+  font-size: 22px;
+  -webkit-transition: 0.5s;
+  transition: 0.5s;
+  cursor: pointer;
+  color: #fefefe;
+}
+
+button#Login_Register:hover {
+  background: #503c2c;
+  color: white;
+  -webkit-transform: rotate(-2deg);
+  transform: rotate(-2deg);
+}
+
+div#blocAuth {
+  text-align: center;
+}

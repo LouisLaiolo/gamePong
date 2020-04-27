@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <title>NOT FF7 REMAKE</title>
+    <link href="css/style.css" rel="stylesheet" />
+    <meta name="description" content="M1 - PONG" />
+    <meta name="author" content="Laiolo_Louis" />
+  </head>
+  <body>
+    <div id="app">
+        <div>
+            <div id="title"><h1>NOT FF7 REMAKE</h1></div>
+            <div id="info"><p>Laiolo Louis - M1 MIAGE APP</p></div>
+            
+        </div>
+        <div v-if="isAboutEnabled">
+            ABOUT 
+            <button @click="isAboutEnabled=false">RETOUR</button>
+        </div>
+        <div v-else-if="!isUsernameSet">
+            
+            <div id="blocAuth">
+              <div class="n_log_in">
+                <input type="text" id="userName" placeholder="Username..." minlength="4" maxlength="12" required v-model="player.username" @keyup.enter="validateUsername" />
+
+                <button @click="validateUsername" id="Login_Register">PLAY</button>
+              </div>
+            </div>
+            </div>
+            <div v-else-if="isLookingForMatch">
+                LOOKING FOR MATCH !!
+            </div>
+            <div v-else-if="!isGameLaunched">
+                  <div id="blocToCenter">
+                    <div style="text-align: center;" id="info">
+                        {{Object.keys(players).length}} joueurs sont en ligne
+                      </div>
+                    <div id="allthethings">
+                      <div @click="playAs('single')" id="single"><p>SINGLE PLAYER</p></div>
+                      <div @click="playAs('two')" id="two"><p>2 PLAYERS</p></div>
+                      <div @click="playAs('four')" id="four"><p>4 PLAYERS</p></div>
+                      <div @click="isAboutEnabled=true" id="infos"><p>ABOUT</p></div>
+                    </div>
+                    </div>
+            </div>
+
+            <div v-else>
+                <div id="blocToCenter">
+                  <div id="left">
+                    <input id="startGame" type="image" src="./img/startBtn.png" />
+                    <input id="pauseGame" type="image" src="./img/pauseBtn.png" />
+                    <input id="resumeGame" type="image" src="./img/resumeBtn.png" />
+                  </div>
+                  <div id="divGame"></div>
+                  <div id="right"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+  </body>
+  <script src="socket.io-client/dist/socket.io.js"></script>
+  <script>
+      const socket = io("http://localhost:3000");
+  </script>
+
+  <script src="js/game.js"></script>
+  <script src="js/game.conf.js"></script>
+<script>
+    var run = function () {
+                      // la "boucle" run() du jeu grosso modo
+                      game.clearLayer(game.playersBallLayer);
+                      game.displayPlayers();
+                      game.updateInfoGame();
+                      if (game.gameOn) game.movePlayers();
+                      if (game.ball.inGame) {
+                        if (game.gameOn) game.ai.move();
+                        game.lostBall();
+                        game.moveBall();
+                        game.collideBallWithPlayersAndAction();
+                      }
+                      requestAnimId = window.requestAnimationFrame(run); // rappel de run au prochain refresh
+                    };
+</script>
+  <script src="js/game.menu.js"></script>
+
+  <script src="js/game.core.js"></script>
+  <script src="js/game.display.js"></script>
+  <script src="js/game.control.js"></script>
+  <script src="js/game.keycode.js"></script>
+  <script src="js/game.ai.js"></script>
+
+  <script src="/vue/dist/vue.js"></script>
+  <script>
+    var $v = new Vue({
+      el: "#app",
+      data: {
+          players : {},
+        player: {
+          username: "",
+        },
+        isLookingForMatch : false,
+        isUsernameSet : false,
+        isGameLaunched:false,
+        isAboutEnabled:false
+        
+      },
+      mounted () {
+          let $ = this;
+        
+        socket.on("logged_in", function () {
+            $.isUsernameSet=true
+        });
+
+        socket.on('matchIsFound', () => {
+            console.log("MATCH IS FOUNd")
+            gameInit();
+        });
+        
+        socket.on("list_joueurs", (jrs) => {
+            console.log("PLAYERS LIST",jrs)
+              $.players = jrs;
+            });
+      },
+      methods: {
+          playAs(mod){
+            switch (mod) {
+                case "single":
+                this.isGameLaunched=true
+                this.$nextTick(()=>{
+                    game.iaGame=true;
+                    game.playerOne.amI=true;
+                    gameInit()
+                })
+            break;
+            case "two":
+                break;
+                case "four":
+                    break;
+                }
+          },
+          validateUsername(){
+              let un = this.player.username
+              if(un.length<4 || un.length>12)
+                alert('Username is not valid')
+            else{
+                socket.emit("login_register", { username: un, });
+                }
+          }
+      },
+    });
+  </script>
+</html>
