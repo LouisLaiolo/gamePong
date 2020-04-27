@@ -28,8 +28,8 @@
               </div>
             </div>
             </div>
-            <div v-else-if="isLookingForMatch">
-                LOOKING FOR MATCH !!
+            <div v-else-if="isLookingForMatch" style="    text-align: center; color: white; font-size: 29px; margin-top: 75px;">
+                Looking for game party, please wait until there is enough players...
             </div>
             <div v-else-if="!isGameLaunched">
                   <div id="blocToCenter">
@@ -112,13 +112,28 @@
             $.isUsernameSet=true
         });
 
-        socket.on('matchIsFound', () => {
-            console.log("MATCH IS FOUNd")
-            gameInit();
+
+        socket.on('gameEnd', (rm) => {
+          $.isGameLaunched=false
+          $.isLookingForMatch=false
+        })
+        socket.on('matchIsFound', (rm) => {
+          $.isGameLaunched=true
+          $.isLookingForMatch=false
+
+          $.$nextTick(()=>{
+              game.iaGame=false;
+              if(rm.player1.id == socket.id)
+                game.playerOne.amI=true;
+                else
+                game.playerTwo.amI=true;
+              gameInit(rm)
+              game.gameOn = true;
+              game.reinitGame();
+          })
         });
         
         socket.on("list_joueurs", (jrs) => {
-            console.log("PLAYERS LIST",jrs)
               $.players = jrs;
             });
       },
@@ -134,9 +149,9 @@
                 })
             break;
             case "two":
+              socket.emit('playTwo')
+              this.isLookingForMatch=true
                 break;
-                case "four":
-                    break;
                 }
           },
           validateUsername(){

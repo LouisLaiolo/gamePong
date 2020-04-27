@@ -1,6 +1,8 @@
 var requestAnimId;
-var gameInit = function () {
+var room;
+var gameInit = function (r) {
   // le code de l'initialisation
+  room = r
   game.init();
   requestAnimId = window.requestAnimationFrame(main); // premier appel de main au rafraîchissement de la page
 };
@@ -27,25 +29,15 @@ var main = function () {
 
 var sendPosition = function () {
   if (game.playerOne.goDown || game.playerOne.goUp)
-    socket.emit("playerMove", {
-      roomId: this.newPong.getGameId(),
-      player: "playerOne",
-      posY: game.playerOne.posY,
-    });
+    socket.emit("playerMove", game.playerOne.sprite.posY);
   else if (game.playerTwo.goDown || game.playerTwo.goUp)
-    socket.emit("playerMove", {
-      roomId: this.newPong.getGameId(),
-      player: "playerTwo",
-      posY: game.playerTwo.posY,
-    });
+    socket.emit("playerMove", game.playerTwo.sprite.posY);
 };
 
 var ballPosition = function () {
-  if (game.ball.inGame)
-    socket.emit("ball", {
-      roomId: this.newPong.getGameId(),
-      position: { posX: game.ball.posX, posY: game.ball.posY },
-    });
+  if (game.ball.inGame && game.playerOne.amI)
+    socket.emit("ball", {x: game.ball.sprite.posX, y: game.ball.sprite.posY },
+    );
 };
 
 var scoreCheck = function () {
@@ -149,16 +141,16 @@ socket.on("playerTwo", (data) => {
 });
 
 socket.on("playerOnemove", (data) => {
-  if (game.playerTwo.amI) game.playerOne.posY = data.posY;
+  game.playerOne.sprite.posY = data.posY;
 });
 
 socket.on("playerTwomove", (data) => {
-  if (game.playerOne.amI) game.playerTwo.posY = data.posY;
+  game.playerTwo.sprite.posY = data.posY;
 });
 
-socket.on("ballmove", (data) => {
-  game.ball.posX = data.position.posX;
-  game.ball.posY = data.position.posY;
+socket.on("ballmove", (balle) => {
+  game.ball.sprite.posX = balle.x;
+  game.ball.sprite.posY = balle.y;
 });
 
 socket.on("scoreUpdate", (data) => {
