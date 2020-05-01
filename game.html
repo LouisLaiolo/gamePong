@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <title>NOT FF7 REMAKE</title>
+    <link href="css/style.css" rel="stylesheet" />
+    <meta name="description" content="M1 - PONG" />
+    <meta name="author" content="Laiolo_Louis" />
+  </head>
+  <body>
+    <script src="socket.io-client/dist/socket.io.js"></script>
+    <script>
+      var nom = Math.random().toString(36).substr(2, 9);
+      var joueurs = {};
+
+      const socket = io("http://localhost:3000", { query: "nom=" + nom });
+
+      socket.on("list_joueurs", (jrs) => {
+        joueurs = jrs;
+      });
+    </script>
+    <script src="js/game.js"></script>
+    <script src="js/game.conf.js"></script>
+    <script src="js/game.display.js"></script>
+    <script src="js/game.control.js"></script>
+    <script src="js/game.keycode.js"></script>
+    <script src="js/game.ai.js"></script>
+    <script>
+      (function () {
+        var requestAnimId;
+        var initialisation = function () {
+          game.init();
+          requestAnimId = window.requestAnimationFrame(run); // premier appel de run au rafraîchissement de la page
+        };
+        var run = function () {
+          // la "boucle" run() du jeu grosso modo
+          game.clearLayer(game.playersBallLayer);
+          game.displayPlayers();
+          game.updateInfoGame();
+          if (game.gameOn) game.movePlayers();
+          if (game.ball.inGame) {
+            if (game.gameOn) game.ai.move();
+            game.lostBall();
+            game.moveBall();
+            game.collideBallWithPlayersAndAction();
+          }
+          requestAnimId = window.requestAnimationFrame(run); // rappel de run au prochain refresh
+        };
+        window.onload = initialisation; // appel de la fonction initialisation au chargement de la page
+      })();
+    </script>
+    <div id="title"><h1>NOT FF7 REMAKE</h1></div>
+    <div id="info"><p>Laiolo Louis - M1 MIAGE APP</p></div>
+    <div id="blocToCenter">
+      <div id="left">
+        <input id="startGame" type="image" src="./img/startBtn.png" />
+        <input id="pauseGame" type="image" src="./img/pauseBtn.png" />
+        <input id="resumeGame" type="image" src="./img/resumeBtn.png" />
+      </div>
+      <div id="divGame"></div>
+      <div id="right"></div>
+    </div>
+  </body>
+</html>

@@ -14,7 +14,11 @@
             <div id="info"><p>Laiolo Louis - M1 MIAGE APP</p></div>
             
         </div>
-        <div v-if="isAboutEnabled">
+        <div v-if="winner!=null" id="info">
+          LA PARTIE EST FINIS <br>
+          <h2>LE JOUEUR GAGNANT : {{winner}}</h2>
+        </div>
+        <div v-else-if="isAboutEnabled">
             ABOUT 
             <button @click="isAboutEnabled=false">RETOUR</button>
         </div>
@@ -102,7 +106,8 @@
         isLookingForMatch : false,
         isUsernameSet : false,
         isGameLaunched:false,
-        isAboutEnabled:false
+        isAboutEnabled:false,
+        winner : null
         
       },
       mounted () {
@@ -113,7 +118,9 @@
         });
 
 
-        socket.on('gameEnd', (rm) => {
+        socket.on('gameEnd', (winner) => {
+          console.log("GAME ENDED !! ")
+          $.winner = winner
           $.isGameLaunched=false
           $.isLookingForMatch=false
         })

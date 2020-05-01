@@ -455,7 +455,11 @@ var game = {
       if (game.playerOne.amI) {
         if (game.playerOne.goUp && game.playerOne.sprite.posY > 0) {
           game.playerOne.sprite.posY -= 5;
-        } else if (game.playerOne.goDown && game.playerOne.sprite.posY < game.conf.GROUNDLAYERHEIGHT - game.playerOne.sprite.height) {
+        } else if (
+          game.playerOne.goDown &&
+          game.playerOne.sprite.posY <
+            game.conf.GROUNDLAYERHEIGHT - game.playerOne.sprite.height
+        ) {
           game.playerOne.sprite.posY += 5;
         }
       } else if (game.playerTwo.amI) {
@@ -490,6 +494,10 @@ var game = {
 
   lostBall: function () {
     if (this.ball.lost(this.playerOne)) {
+      socket.emit("lost_shot", {
+        looser: "player1",
+        winner: "player2",
+      });
       this.victoryOneSound.play();
       if (this.playerTwo.score != this.ultimateReward) {
         this.ball.inGame = false;
@@ -500,9 +508,13 @@ var game = {
           }, 3000);
         }
       } else if (this.playerTwo.score >= this.ultimateReward) {
-        this.victoryEndGame(this.playerTwo);
+        // this.victoryEndGame(this.playerTwo);
       }
     } else if (this.ball.lost(this.playerTwo)) {
+      socket.emit("lost_shot", {
+        looser: "player2",
+        winner: "player1",
+      });
       this.victoryTwoSound.play();
       if (this.playerOne.score != this.ultimateReward) {
         this.playerOne.score++;
@@ -513,7 +525,7 @@ var game = {
           }, 3000);
         }
       } else if (this.playerOne.score >= this.ultimateReward) {
-        this.victoryEndGame(this.playerOne);
+        // this.victoryEndGame(this.playerOne);
       }
     }
     this.scoreLayer.clear();

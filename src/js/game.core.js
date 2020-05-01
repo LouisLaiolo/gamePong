@@ -2,7 +2,7 @@ var requestAnimId;
 var room;
 var gameInit = function (r) {
   // le code de l'initialisation
-  room = r
+  room = r;
   game.init();
   requestAnimId = window.requestAnimationFrame(main); // premier appel de main au rafraîchissement de la page
 };
@@ -35,31 +35,16 @@ var sendPosition = function () {
 };
 
 var ballPosition = function () {
-  if (game.ball.inGame && game.playerOne.amI)
-    socket.emit("ball", {x: game.ball.sprite.posX, y: game.ball.sprite.posY },
-    );
+  if (game.ball.inGame)
+    socket.emit("ball", {
+      speed: game.ball.speed,
+      source: game.playerOne.amI ? "player1" : "player2",
+      x: game.ball.sprite.posX,
+      y: game.ball.sprite.posY,
+    });
 };
 
-var scoreCheck = function () {
-  if (game.ball.lost(game.playerOne))
-    socket.emit("score", {
-      roomId: this.newPong.getGameId(),
-      player: "playerOne",
-      score: {
-        playerOne: game.playerOne.score,
-        playerTwo: game.playerTwo.score,
-      },
-    });
-  else if (game.ball.lost(game.playerTwo))
-    socket.emit("score", {
-      roomId: this.newPong.getGameId(),
-      player: "playerTwo",
-      score: {
-        playerOne: game.playerOne.score,
-        playerTwo: game.playerTwo.score,
-      },
-    });
-};
+var scoreCheck = function () {};
 
 let pong = game;
 let newPong;
@@ -149,6 +134,9 @@ socket.on("playerTwomove", (data) => {
 });
 
 socket.on("ballmove", (balle) => {
+  console.log(balle.speed);
+  console.log("ball is moving");
+  game.ball.speed = balle.speed;
   game.ball.sprite.posX = balle.x;
   game.ball.sprite.posY = balle.y;
 });
@@ -185,7 +173,21 @@ socket.on("scoreUpdate", (data) => {
     game.beginingP2 = false;
   }
 });
-
+socket.on("score", (data) => {
+  game.playerOne.score = data.player1;
+  game.playerTwo.score = data.player2;
+  game.clearLayer(game.scoreLayer);
+  game.displayScore(game.playerOne.score, game.playerTwo.score);
+});
+socket.on("gotBallInHand", (data) => {
+  console.log("GOT BALL IN HAND ! ");
+  game.ball.directionX = -game.ball.directionX;
+  game.ball.sprite.posX =
+    game[game.playerOne.amI ? "playerOne" : "playerTwo"].sprite.posX +
+    game[game.playerOne.amI ? "playerOne" : "playerTwo"].sprite.width;
+  game.ball.sprite.posY =
+    game[game.playerOne.amI ? "playerOne" : "playerTwo"].sprite.posY;
+});
 socket.on("playerReady", (data) => {
   if (data.player === "playerOne") game.beginingP1 = true;
   if (data.player === "playerTwo") game.beginingP2 = true;
