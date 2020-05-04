@@ -10,12 +10,11 @@
   <body>
     <div id="app">
         <div>
-            <div id="title"><h1>NOT FF7 REMAKE</h1></div>
+            <div id="title"><h1>NOT TETRIS</h1></div>
             <div id="info"><p>Laiolo Louis - M1 MIAGE APP</p></div>
-            
         </div>
         <div v-if="winner!=null" id="info">
-          LA PARTIE EST FINIS <br>
+          LA PARTIE EST FINIE <br>
           <h2>LE JOUEUR GAGNANT : {{winner}}</h2>
         </div>
         <div v-else-if="isAboutEnabled">
@@ -23,19 +22,17 @@
             <button @click="isAboutEnabled=false">RETOUR</button>
         </div>
         <div v-else-if="!isUsernameSet">
-            
-            <div id="blocAuth">
-              <div class="n_log_in">
-                <input type="text" id="userName" placeholder="Username..." minlength="4" maxlength="12" required v-model="player.username" @keyup.enter="validateUsername" />
-
-                <button @click="validateUsername" id="Login_Register">PLAY</button>
-              </div>
+          <div id="blocAuth">
+            <div class="n_log_in">
+              <input type="text" id="userName" placeholder="Username..." minlength="4" maxlength="12" required v-model="player.username" @keyup.enter="validateUsername" />
+              <button @click="validateUsername" id="Login_Register">PLAY</button>
             </div>
-            </div>
-            <div v-else-if="isLookingForMatch" style="    text-align: center; color: white; font-size: 29px; margin-top: 75px;">
-                Looking for game party, please wait until there is enough players...
-            </div>
-            <div v-else-if="!isGameLaunched">
+          </div>
+        </div>
+        <div v-else-if="isLookingForMatch" style="text-align: center; color: white; font-size: 29px; margin-top: 75px;">
+          Looking for game party, please wait until there is enough players...
+        </div>
+        <div v-else-if="!isGameLaunched">
                   <div id="blocToCenter">
                     <div style="text-align: center;" id="info">
                         {{Object.keys(players).length}} joueurs sont en ligne
