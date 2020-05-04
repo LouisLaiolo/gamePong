@@ -191,3 +191,10 @@ button#Login_Register:hover {
 div#blocAuth {
   text-align: center;
 }
+
+div#waiting {
+  text-align: center; 
+  color: white; 
+  font-size: 29px; 
+  margin-top: 75px;
+}

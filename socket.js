@@ -1,7 +1,6 @@
 var players = {};
 var rooms = {};
 var gameRoomTwo = "versus";
-var gameRoomFour = "confused";
 
 module.exports = function (io) {
   function findAvailableRooms(client) {
@@ -112,7 +111,6 @@ module.exports = function (io) {
             `${data.winner} (${room[data.winner].username})`
           );
         }
-
         io.to(room[data.looser].id).emit("gotBallInHand", {
           player1: room.player1.score,
           player2: room.player2.score,

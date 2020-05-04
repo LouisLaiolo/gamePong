@@ -50,28 +50,6 @@ let pong = game;
 let newPong;
 let player;
 
-//creation du joueur 1 de gauche
-//document.getElementById('createGame').onclick = ()=> {
-//game.oneVSone=true;
-//socket.emit('playPongTwo', {nbPlayer : 2});
-//player = new Player('left');
-//};
-
-/*document.getElementById('createGameIA').onclick = ()=>{
-        game.iaGame = true;
-        game.playerOne.amI = true;
-        document.getElementById('menu').style.display = 'none';
-        document.getElementById('completGame').style.display = 'block';
-        document.getElementById('startGame').disabled = false;
-        document.getElementById('message').textContent = 'Enjoy your game !'
-        initialisation();
-    };*/
-
-/*document.getElementById('createGame2vs2').onclick = ()=>{
-    game.twoVStwo = true;
-    socket.emit('playPongFour', {nbPlayer : 4});
-};*/
-
 // Creation de la partie par P1
 socket.on("newGame", (data) => {
   let message;
@@ -80,23 +58,6 @@ socket.on("newGame", (data) => {
   this.newPong.displayGame(message);
   game.playerOne.isSelected = true;
 });
-
-//rejoindre une partie
-/*document.getElementById('joinGame').onclick = () => {
-    const roomID = document.getElementById('RoomName').value;
-    if (!roomID) {
-        alert('Please enter the name of the game.');
-        return;
-    }
-    if(!game.twoVStwo){
-        socket.emit('joinGame', {roomId: roomID, places : 2});
-        //player = new Player('right');
-    }
-    else{
-        socket.emit('joinGame', {roomId: roomID, places : 4});
-    }
-    
-};*/
 
 socket.on("playerOne", (data) => {
   game.playerOne.amI = true;
@@ -173,12 +134,14 @@ socket.on("scoreUpdate", (data) => {
     game.beginingP2 = false;
   }
 });
+
 socket.on("score", (data) => {
   game.playerOne.score = data.player1;
   game.playerTwo.score = data.player2;
   game.clearLayer(game.scoreLayer);
   game.displayScore(game.playerOne.score, game.playerTwo.score);
 });
+
 socket.on("gotBallInHand", (data) => {
   console.log("GOT BALL IN HAND ! ");
   game.ball.directionX = -game.ball.directionX;
@@ -188,6 +151,7 @@ socket.on("gotBallInHand", (data) => {
   game.ball.sprite.posY =
     game[game.playerOne.amI ? "playerOne" : "playerTwo"].sprite.posY;
 });
+
 socket.on("playerReady", (data) => {
   if (data.player === "playerOne") game.beginingP1 = true;
   if (data.player === "playerTwo") game.beginingP2 = true;

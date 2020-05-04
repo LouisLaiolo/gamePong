@@ -17,10 +17,6 @@
           LA PARTIE EST FINIE <br>
           <h2>LE JOUEUR GAGNANT : {{winner}}</h2>
         </div>
-        <div v-else-if="isAboutEnabled">
-            ABOUT 
-            <button @click="isAboutEnabled=false">RETOUR</button>
-        </div>
         <div v-else-if="!isUsernameSet">
           <div id="blocAuth">
             <div class="n_log_in">
@@ -29,34 +25,30 @@
             </div>
           </div>
         </div>
-        <div v-else-if="isLookingForMatch" style="text-align: center; color: white; font-size: 29px; margin-top: 75px;">
+        <div v-else-if="isLookingForMatch" id="waiting">
           Looking for game party, please wait until there is enough players...
         </div>
         <div v-else-if="!isGameLaunched">
-                  <div id="blocToCenter">
-                    <div style="text-align: center;" id="info">
-                        {{Object.keys(players).length}} joueurs sont en ligne
-                      </div>
-                    <div id="allthethings">
-                      <div @click="playAs('single')" id="single"><p>SINGLE PLAYER</p></div>
-                      <div @click="playAs('two')" id="two"><p>2 PLAYERS</p></div>
-                      <div @click="playAs('four')" id="four"><p>4 PLAYERS</p></div>
-                      <div @click="isAboutEnabled=true" id="infos"><p>ABOUT</p></div>
-                    </div>
-                    </div>
+          <div id="blocToCenter">
+            <div style="text-align: center;" id="info">
+              {{Object.keys(players).length}} joueurs sont en ligne
             </div>
-
-            <div v-else>
-                <div id="blocToCenter">
-                  <div id="left">
-                    <input id="startGame" type="image" src="./img/startBtn.png" />
-                    <input id="pauseGame" type="image" src="./img/pauseBtn.png" />
-                    <input id="resumeGame" type="image" src="./img/resumeBtn.png" />
-                  </div>
-                  <div id="divGame"></div>
-                  <div id="right"></div>
-                </div>
+            <div id="allthethings">
+              <div @click="playAs('single')" id="single"><p>SINGLE PLAYER</p></div>
+              <div @click="playAs('two')" id="two"><p>2 PLAYERS</p></div>
             </div>
+          </div>
+        </div>
+        <div v-else>
+          <div id="blocToCenter">
+            <div id="left">
+              <input id="startGame" type="image" src="./img/startBtn.png" />
+              <input id="pauseGame" type="image" src="./img/pauseBtn.png" />
+              <input id="resumeGame" type="image" src="./img/resumeBtn.png" />
+            </div>
+            <div id="divGame"></div>
+            <div id="right"></div>
+          </div>
         </div>
     </div>
   </body>
@@ -64,108 +56,105 @@
   <script>
       const socket = io("http://localhost:3000");
   </script>
-
   <script src="js/game.js"></script>
   <script src="js/game.conf.js"></script>
-<script>
+  <script>
     var run = function () {
-                      // la "boucle" run() du jeu grosso modo
-                      game.clearLayer(game.playersBallLayer);
-                      game.displayPlayers();
-                      game.updateInfoGame();
-                      if (game.gameOn) game.movePlayers();
-                      if (game.ball.inGame) {
-                        if (game.gameOn) game.ai.move();
-                        game.lostBall();
-                        game.moveBall();
-                        game.collideBallWithPlayersAndAction();
-                      }
-                      requestAnimId = window.requestAnimationFrame(run); // rappel de run au prochain refresh
-                    };
-</script>
+      game.clearLayer(game.playersBallLayer);
+      game.displayPlayers();
+      game.updateInfoGame();
+      if (game.gameOn) 
+        game.movePlayers();
+      if (game.ball.inGame) {
+        if (game.gameOn) game.ai.move();
+          game.lostBall();
+          game.moveBall();
+          game.collideBallWithPlayersAndAction();
+      }
+      requestAnimId = window.requestAnimationFrame(run);
+    };
+  </script>
   <script src="js/game.menu.js"></script>
-
   <script src="js/game.core.js"></script>
   <script src="js/game.display.js"></script>
   <script src="js/game.control.js"></script>
   <script src="js/game.keycode.js"></script>
   <script src="js/game.ai.js"></script>
-
   <script src="/vue/dist/vue.js"></script>
   <script>
     var $v = new Vue({
+
       el: "#app",
+
       data: {
-          players : {},
-        player: {
-          username: "",
-        },
+        players : {},
+        player: {username: "",},
         isLookingForMatch : false,
         isUsernameSet : false,
         isGameLaunched:false,
         isAboutEnabled:false,
         winner : null
-        
       },
+
       mounted () {
-          let $ = this;
-        
+        let $ = this;
         socket.on("logged_in", function () {
-            $.isUsernameSet=true
+          $.isUsernameSet = true
         });
 
+      socket.on('gameEnd', (winner) => {
+        console.log("GAME ENDED !! ")
+        $.winner = winner
+        $.isGameLaunched = false
+        $.isLookingForMatch = false
+      })
 
-        socket.on('gameEnd', (winner) => {
-          console.log("GAME ENDED !! ")
-          $.winner = winner
-          $.isGameLaunched=false
-          $.isLookingForMatch=false
-        })
-        socket.on('matchIsFound', (rm) => {
-          $.isGameLaunched=true
-          $.isLookingForMatch=false
-
-          $.$nextTick(()=>{
-              game.iaGame=false;
-              if(rm.player1.id == socket.id)
-                game.playerOne.amI=true;
-                else
-                game.playerTwo.amI=true;
-              gameInit(rm)
-              game.gameOn = true;
-              game.reinitGame();
+      socket.on('matchIsFound', (rm) => {
+        $.isGameLaunched = true
+        $.isLookingForMatch = false
+        $.$nextTick(()=>{
+          game.iaGame = false;
+          if(rm.player1.id == socket.id)
+            game.playerOne.amI = true;
+          else
+            game.playerTwo.amI = true;
+          gameInit(rm)
+          game.gameOn = true;
+          game.reinitGame();
           })
         });
         
         socket.on("list_joueurs", (jrs) => {
-              $.players = jrs;
-            });
+          $.players = jrs;
+        });
       },
+
       methods: {
-          playAs(mod){
-            switch (mod) {
-                case "single":
-                this.isGameLaunched=true
-                this.$nextTick(()=>{
-                    game.iaGame=true;
-                    game.playerOne.amI=true;
-                    gameInit()
-                })
+        playAs(mod){
+          switch (mod) {
+            case "single":
+              this.isGameLaunched = true
+              this.$nextTick(()=>{
+                game.iaGame = true;
+                game.playerOne.amI = true;
+                gameInit()
+              })
             break;
             case "two":
               socket.emit('playTwo')
               this.isLookingForMatch=true
                 break;
-                }
-          },
-          validateUsername(){
-              let un = this.player.username
-              if(un.length<4 || un.length>12)
-                alert('Username is not valid')
-            else{
-                socket.emit("login_register", { username: un, });
-                }
           }
+        },
+
+        validateUsername(){
+          let un = this.player.username
+            if(un.length<4 || un.length>12)
+              alert('Username is not valid')
+          else{
+            socket.emit("login_register", { username: un, });
+          }
+        }
       },
     });
   </script>
